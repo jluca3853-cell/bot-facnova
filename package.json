@@ -1,0 +1,14 @@
+{
+  "name": "fivem-manager-bot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "discord.js": "^14.24.0",
+    "dotenv": "^17.2.2"
+  }
+}
