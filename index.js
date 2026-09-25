@@ -6,10 +6,9 @@ const {
     Collection
 } = require("discord.js");
 
-const fs = require("fs");
-const path = require("path");
-
-const { initDatabase } = require("./database/database");
+const {
+    initDatabase
+} = require("./database");
 
 const client = new Client({
     intents: [
@@ -20,40 +19,27 @@ const client = new Client({
 
 client.commands = new Collection();
 
-const commandsPath = path.join(__dirname, "commands");
+const configuracao = require("./configuracao");
 
-for (const file of fs.readdirSync(commandsPath)) {
-    if (!file.endsWith(".js")) continue;
-
-    const command = require(path.join(commandsPath, file));
-
-    if (command.data && command.execute) {
-        client.commands.set(
-            command.data.name,
-            command
-        );
-    }
+if (configuracao.data && configuracao.execute) {
+    client.commands.set(
+        configuracao.data.name,
+        configuracao
+    );
 }
 
-const eventsPath = path.join(__dirname, "events");
+const ready = require("./ready");
+const interactionCreate = require("./interactionCreate");
 
-for (const file of fs.readdirSync(eventsPath)) {
-    if (!file.endsWith(".js")) continue;
+client.once(
+    ready.name,
+    (...args) => ready.execute(...args)
+);
 
-    const event = require(path.join(eventsPath, file));
-
-    if (event.once) {
-        client.once(
-            event.name,
-            (...args) => event.execute(...args)
-        );
-    } else {
-        client.on(
-            event.name,
-            (...args) => event.execute(...args)
-        );
-    }
-}
+client.on(
+    interactionCreate.name,
+    (...args) => interactionCreate.execute(...args)
+);
 
 initDatabase();
 
